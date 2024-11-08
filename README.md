@@ -1,7 +1,5 @@
 # The Power of Many: Investigating Defense Mechanisms for Resilient Graph Neural Networks
 
-This repository implements a framework to simulate and defend against backdoor attacks on Graph Neural Networks (GNNs). It includes multiple GNN architectures, attack strategies, and defense mechanisms to analyze the resilience of GNNs under various backdoor attacks.
-
 ## Overview
 
 This project explores backdoor attacks on GNNs and the effectiveness of several defense strategies. Different GNN architectures are used alongside various attack methods, including **SBA-Samp**, **SBA-Gen**, **GTA**, **UGBA**, and **DPGBA**. The implemented defenses include **Dominant Set Outlier Detection**, **Prune**, and **Prune + LD (Label Discard)**.
