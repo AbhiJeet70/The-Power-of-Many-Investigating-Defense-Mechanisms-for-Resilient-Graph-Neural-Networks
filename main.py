@@ -9,6 +9,7 @@ from gnn_models.trigger_generator import TriggerGenerator
 from defenses.prune import defense_prune_edges
 from defenses.prune_and_discard import defense_prune_and_discard_labels
 from defenses.ood_detector import OODDetector, train_ood_detector
+from defenses.dominant_set_clustering import dominant_set_clustering  # Added import for DOMINANT defense
 from utils.seed import set_seed
 from utils.metrics import compute_metrics
 from utils.visualize import visualize_pca_for_attacks
@@ -17,6 +18,7 @@ from attacks.sba_gen import sba_gen_attack
 from attacks.gta import gta_attack
 from attacks.ugba import ugba_attack
 from attacks.dpgba import dpgba_attack
+
 
 # Set up reproducibility
 set_seed()
@@ -113,6 +115,19 @@ def run_all_attacks():
                 "Clean Accuracy": clean_acc_prune_discard
             })
             print(f"{dataset_name} | Attack: {attack_name} | Defense: Prune + Discard Labels | ASR: {asr_prune_discard:.2f}%, Clean Acc: {clean_acc_prune_discard:.2f}%")
+
+            # Defense 3: DOMINANT (Dominant Set Clustering)
+            data_dominant = dominant_set_clustering(data_poisoned.clone(), threshold=0.7, use_pca=True, pca_components=10, n_clusters=5)
+            asr_dominant, clean_acc_dominant = compute_metrics(model, data_dominant, poisoned_nodes)
+            results_summary.append({
+                "Dataset": dataset_name,
+                "Model": "GCN",
+                "Attack": attack_name,
+                "Defense": "DOMINANT",
+                "ASR": asr_dominant,
+                "Clean Accuracy": clean_acc_dominant
+            })
+            print(f"{dataset_name} | Attack: {attack_name} | Defense: DOMINANT | ASR: {asr_dominant:.2f}%, Clean Acc: {clean_acc_dominant:.2f}%")
 
             # Store embeddings for visualization
             attack_embeddings_dict[f"{dataset_name}-{attack_name}"] = {
