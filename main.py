@@ -117,7 +117,7 @@ def run_all_attacks():
             print(f"{dataset_name} | Attack: {attack_name} | Defense: Prune + Discard Labels | ASR: {asr_prune_discard:.2f}%, Clean Acc: {clean_acc_prune_discard:.2f}%")
 
             # Defense 3: DOMINANT (Dominant Set Clustering)
-            data_dominant = dominant_set_clustering(data_poisoned.clone(), threshold=0.7, use_pca=True, pca_components=10, n_clusters=5)
+            data_dominant = dominant_set_clustering(data_poisoned.clone(), threshold=0.7, use_pca=True, pca_components=10)
             asr_dominant, clean_acc_dominant = compute_metrics(model, data_dominant, poisoned_nodes)
             results_summary.append({
                 "Dataset": dataset_name,
