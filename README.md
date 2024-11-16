@@ -175,7 +175,20 @@ PCA visualizations show the separation between clean nodes and nodes with backdo
     ```bash
     python main.py
 3. **Check results**: 
-Results are saved as a CSV file backdoor_attack_results_summary.csv. 
+Results are saved as a CSV file backdoor_attack_results_summary.csv.
+
+## References
+
+1. Z. Zhang, J. Jia, B. Wang, and N. Z. Gong, “Backdoor attacks to graph neural networks,” in *Proceedings of the 26th ACM Symposium on Access Control Models and Technologies*, ser. SACMAT ’21. New York, NY, USA: Association for Computing Machinery, 2021, p. 15–26. [Online]. Available: [https://doi.org/10.1145/3450569.3463560](https://doi.org/10.1145/3450569.3463560)
+
+2. Z. Xi, R. Pang, S. Ji, and T. Wang, “Graph backdoor,” in *30th USENIX Security Symposium (USENIX Security 21)*. USENIX Association, Aug. 2021, pp. 1523–1540. [Online]. Available: [https://www.usenix.org/conference/usenixsecurity21/presentation/xi](https://www.usenix.org/conference/usenixsecurity21/presentation/xi)
+
+3. E. Dai, M. Lin, X. Zhang, and S. Wang, “Unnoticeable backdoor attacks on graph neural networks,” in *Proceedings of the ACM Web Conference 2023*, 2023, pp. 2263–2273. [Online]. Available:[https://dl.acm.org/doi/10.1145/3543507.3583392](https://dl.acm.org/doi/10.1145/3543507.3583392)
+
+4. Z. Zhang, M. Lin, E. Dai, and S. Wang, “Rethinking graph backdoor attacks: A distribution-preserving perspective,” in *Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining*, ser. KDD ’24. New York, NY, USA: Association for Computing Machinery, 2024, p. 4386–4397. [Online]. Available: [https://doi.org/10.1145/3637528.3671910](https://doi.org/10.1145/3637528.3671910)
+
+5. E. Mequanint, Y. Tadesse, D. Melkamu, A. Negash, and Y. Tadesse, “Simultaneous clustering and outlier detection using dominant sets,” in *2016 15th IEEE International Conference on Machine Learning and Applications (ICMLA)*. IEEE, 2017, pp. 281–288. [Online]. Available: [https://ieeexplore.ieee.org/document/7899983](https://ieeexplore.ieee.org/document/7899983)
+
 
 
 
