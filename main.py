@@ -64,10 +64,12 @@ def run_all_attacks():
             # Apply the attack
             if attack_name == 'DPGBA':
                 data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen, alpha=0.7)
-            elif attack_name == 'SBA-Gen':
+            elif attack_name == 'SBA-GEN':
                 data_poisoned = attack_fn(data, poisoned_nodes, trigger_size=5, trigger_density=0.5, model_type='SW')
             elif attack_name == 'UGBA'
                 data_poisoned = attack_fn(data, num_poisoned_nodes, cluster_threshold=0.8, trigger_density=0.5)
+            elif attack_name == 'SBA_SAMP':
+                data_poisoned = attack_fn((data, poisoned_nodes, trigger_gen))
             else:
                 data_poisoned = attack_fn(data, poisoned_nodes)
 
