@@ -1,5 +1,6 @@
 # sba_samp.py
 import torch
+from attacks.trigger_generator import TriggerGenerator
 
 def sba_samp_attack(data, poisoned_nodes, trigger_gen):
     connected_nodes = [data.edge_index[0][data.edge_index[1] == node] for node in poisoned_nodes]
