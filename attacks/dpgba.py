@@ -1,5 +1,7 @@
 # dpgba.py
 import torch
+from attacks.trigger_generator import TriggerGenerator
+from attacks.ood_detector import OODDetector
 
 def dpgba_attack(data, poisoned_nodes, trigger_gen, alpha=0.7):
     connected_nodes = [data.edge_index[0][data.edge_index[1] == node] for node in poisoned_nodes]
