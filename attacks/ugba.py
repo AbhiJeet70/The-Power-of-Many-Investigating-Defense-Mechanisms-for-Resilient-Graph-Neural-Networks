@@ -1,5 +1,5 @@
 import torch
-
+from attacks.trigger_generator import TriggerGenerator
 def select_diverse_nodes(data, num_nodes_to_select, num_clusters=None):
     """
     Select nodes using a clustering-based approach to ensure diversity, along with high-degree nodes.
@@ -54,14 +54,14 @@ def select_diverse_nodes(data, num_nodes_to_select, num_clusters=None):
 
     return torch.tensor(unique_nodes, dtype=torch.long).to(data.x.device)
 
-def ugba_attack(data, num_poisoned_nodes, cluster_threshold=0.8, trigger_density=0.5):
+def ugba_attack(data, num_poisoned_nodes, trigger_gen, trigger_density=0.5):
     """
-    UGBA attack that uses diverse nodes for poisoning.
+    UGBA attack that uses a simple trigger generator for poisoning.
 
     Parameters:
     - data: PyG data object
     - num_poisoned_nodes: Number of nodes to poison
-    - cluster_threshold: Threshold for clustering in Dominant Set Outlier Detection
+    - trigger_gen: Trigger generator model
     - trigger_density: Density of the trigger subgraph
 
     Returns:
@@ -70,24 +70,24 @@ def ugba_attack(data, num_poisoned_nodes, cluster_threshold=0.8, trigger_density
     # Select diverse nodes to poison
     poisoned_nodes = select_diverse_nodes(data, num_nodes_to_select=num_poisoned_nodes)
 
-    # Apply clustering to ensure node diversity and mitigate detection
-    _, data = dominant_set_clustering(data, threshold=cluster_threshold)
-
-    # Generate trigger features for poisoned nodes
+    # Generate trigger features using the trigger generator
     connected_nodes = [data.edge_index[0][data.edge_index[1] == node] for node in poisoned_nodes]
     avg_features = torch.stack([data.x[nodes].mean(dim=0) if len(nodes) > 0 else data.x.mean(dim=0) for nodes in connected_nodes])
+    trigger_features = trigger_gen(avg_features)
 
-    refined_trigger_features = avg_features + torch.normal(mean=2.0, std=0.5, size=avg_features.shape).to(data.x.device)
-    data.x[poisoned_nodes] = refined_trigger_features
+    # Update poisoned nodes with generated trigger features
+    data.x[poisoned_nodes] = trigger_features
 
-    # Add edges to reinforce connections
+    # Add edges to strengthen connections between poisoned nodes
     new_edges = []
     for i in range(len(poisoned_nodes)):
         node = poisoned_nodes[i]
-        neighbor = connected_nodes[i][0] if len(connected_nodes[i]) > 0 else poisoned_nodes[(i + 1) % len(poisoned_nodes)]
+        neighbor = poisoned_nodes[(i + 1) % len(poisoned_nodes)]  # Connect to the next poisoned node circularly
         new_edges.append([node, neighbor])
 
+    # Convert new edges to tensor and add them to the graph
     new_edges = torch.tensor(new_edges, dtype=torch.long).t().contiguous().to(data.edge_index.device)
     data.edge_index = torch.cat([data.edge_index, new_edges], dim=1)
 
     return data
+
