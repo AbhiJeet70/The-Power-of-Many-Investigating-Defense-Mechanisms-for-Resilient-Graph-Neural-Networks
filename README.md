@@ -2,7 +2,8 @@
 
 ## Overview
 
-This project explores backdoor attacks on GNNs and the effectiveness of several defense strategies. Different GNN architectures are used alongside various attack methods, including **SBA-Samp**, **SBA-Gen**, **GTA**, **UGBA**, and **DPGBA**. The implemented defenses include **Dominant Set Outlier Detection**, **Prune**, and **Prune + LD (Label Discard)**.
+This project explores backdoor attacks on GNNs and the effectiveness of several defense strategies. Different GNN architectures are used alongside various attack methods, including **SBA-Samp**, **SBA-Gen**, **GTA**, **UGBA**, and **DPGBA**. The implemented defenses include **Dominant Set Outlier Detection**, **Prune**, and **Prune + LD (Label Discard)**. This is the implementation of this paper [The Power of Many: Investigating Defense Mechanisms for Resilient Graph Neural Networks](https://ieeexplore.ieee.org/document/10825720)
+
 
 <p align="center">
   <img src="graph_backdoor.png" width="500">
@@ -182,6 +183,21 @@ PCA visualizations show the separation between clean nodes and nodes with backdo
     python main.py
 3. **Check results**: 
 Results are saved as a CSV file backdoor_attack_results_summary.csv.
+
+## Use this bibtex to cite
+
+    
+    @INPROCEEDINGS{10825720,
+      author={Dhali, Abhijeet and Dividino, Renata},
+      booktitle={2024 IEEE International Conference on Big Data (BigData)}, 
+      title={The Power of Many: Investigating Defense Mechanisms for Resilient Graph Neural Networks}, 
+      year={2024},
+      volume={},
+      number={},
+      pages={3572-3578},
+      keywords={Training data;Finance;Entertainment industry;Medical services;Big Data;Graph neural networks;Security;Reliability;Protection;Anomaly detection;Graph Neural Networks (GNNs);Backdoor attacks;Data     poisoning;Security vulnerabilities;Defense mechanisms},
+      doi={10.1109/BigData62323.2024.10825720}}
+
 
 ## References
 
