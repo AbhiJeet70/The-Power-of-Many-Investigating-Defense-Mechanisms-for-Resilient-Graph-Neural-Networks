@@ -184,6 +184,10 @@ PCA visualizations show the separation between clean nodes and nodes with backdo
 3. **Check results**: 
 Results are saved as a CSV file backdoor_attack_results_summary.csv.
 
+## ⭐ Give a Star!
+
+If you found this project useful or interesting, please consider giving it a star on GitHub!
+
 ## Use this bibtex to cite
 
     
