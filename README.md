@@ -190,7 +190,7 @@ If you found this project useful or interesting, please consider giving it a sta
 
 ## Use this bibtex to cite
 
-    
+ ```bibtex
     @INPROCEEDINGS{10825720,
       author={Dhali, Abhijeet and Dividino, Renata},
       booktitle={2024 IEEE International Conference on Big Data (BigData)}, 
@@ -201,7 +201,7 @@ If you found this project useful or interesting, please consider giving it a sta
       pages={3572-3578},
       keywords={Training data;Finance;Entertainment industry;Medical services;Big Data;Graph neural networks;Security;Reliability;Protection;Anomaly detection;Graph Neural Networks (GNNs);Backdoor attacks;Data     poisoning;Security vulnerabilities;Defense mechanisms},
       doi={10.1109/BigData62323.2024.10825720}}
-
+```
 
 ## References
 
