@@ -103,7 +103,8 @@ def run_all_attacks():
                 if attack_name == 'DPGBA':
                     data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen, alpha=0.7)
                 else:
-                    data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen)
+                    data_poisoned = attack_fn(data, poisoned_node_budget, trigger_gen)
+
 
                 data_poisoned.x = data_poisoned.x.detach().clone()
                 model.train()
