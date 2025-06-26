@@ -1,4 +1,3 @@
-
 import torch
 import gc
 import pandas as pd
@@ -25,7 +24,6 @@ from attacks.dpgba import dpgba_attack
 # Set reproducibility
 set_seed()
 
-
 def run_all_attacks():
     datasets = ["Cora", "PubMed", "CiteSeer"]
     results_summary = []
@@ -38,26 +36,61 @@ def run_all_attacks():
         output_dim = dataset.num_classes if isinstance(dataset.num_classes, int) else dataset.num_classes[0]
 
         # Dataset-specific poisoning budgets
-        poisoned_node_budget = POISONED_NODE_BUDGET.get(dataset_name, 10)
+        poisoned_node_budget = POISONED_NODE_BUDGET.get(dataset_name, 3)
 
         # Define GNN models
         model_types = ['GCN', 'GraphSage', 'GAT']
 
         for model_type in model_types:
-            # Initialize model, optimizer, and Trigger Generator
+            # ================================
+            # Baseline training (no attack)
+            # ================================
             if model_type == 'GCN':
-                model = GCN(input_dim=input_dim, hidden_dim=64, output_dim=output_dim).to(device)
+                baseline_model = GCN(input_dim=input_dim, hidden_dim=256, output_dim=output_dim).to(device)
             elif model_type == 'GraphSage':
-                model = GraphSAGE(input_dim=input_dim, hidden_dim=64, output_dim=output_dim).to(device)
+                baseline_model = GraphSAGE(input_dim=input_dim, hidden_dim=256, output_dim=output_dim).to(device)
             elif model_type == 'GAT':
-                model = GAT(input_dim=input_dim, hidden_dim=64, output_dim=output_dim).to(device)
+                baseline_model = GAT(input_dim=input_dim, hidden_dim=256, output_dim=output_dim).to(device)
+
+            baseline_optimizer = Adam(baseline_model.parameters(), lr=0.002)
+            baseline_model.train()
+            for epoch in range(200):
+                baseline_optimizer.zero_grad()
+                out = baseline_model(data.x, data.edge_index)
+                loss = torch.nn.functional.cross_entropy(out[data.train_mask], data.y[data.train_mask])
+                loss.backward()
+                baseline_optimizer.step()
+
+            baseline_model.eval()
+            with torch.no_grad():
+                out = baseline_model(data.x, data.edge_index)
+                _, pred = out.max(dim=1)
+                clean_acc = (pred[data.test_mask] == data.y[data.test_mask]).sum().item() / data.test_mask.sum().item() * 100
+
+            results_summary.append({
+                "Dataset": dataset_name,
+                "Model": model_type,
+                "Attack": "None",
+                "Defense": "None",
+                "ASR": "N/A",
+                "Clean Accuracy": clean_acc
+            })
+            print(f"{dataset_name} | Model: {model_type} | Baseline (No Attack) | Clean Accuracy: {clean_acc:.2f}%")
+
+            # ================================
+            # Run attacks
+            # ================================
+            if model_type == 'GCN':
+                model = GCN(input_dim=input_dim, hidden_dim=256, output_dim=output_dim).to(device)
+            elif model_type == 'GraphSage':
+                model = GraphSAGE(input_dim=input_dim, hidden_dim=256, output_dim=output_dim).to(device)
+            elif model_type == 'GAT':
+                model = GAT(input_dim=input_dim, hidden_dim=256, output_dim=output_dim).to(device)
             optimizer = Adam(model.parameters(), lr=0.002)
             trigger_gen = TriggerGenerator(input_dim=input_dim, hidden_dim=64).to(device)
 
-            # Select high-centrality nodes for poisoning
             poisoned_nodes = torch.arange(poisoned_node_budget).to(device)
 
-            # Define attack methods
             attack_methods = {
                 'SBA-Samp': sba_samp_attack,
                 'SBA-Gen': sba_gen_attack,
@@ -67,16 +100,14 @@ def run_all_attacks():
             }
 
             for attack_name, attack_fn in attack_methods.items():
-                # Apply attack
                 if attack_name == 'DPGBA':
                     data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen, alpha=0.7)
                 else:
                     data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen)
 
-                # Train model with poisoned data
                 data_poisoned.x = data_poisoned.x.detach().clone()
                 model.train()
-                for epoch in range(50):
+                for epoch in range(200):
                     optimizer.zero_grad()
                     out = model(data_poisoned.x, data_poisoned.edge_index)
                     loss = torch.nn.functional.cross_entropy(
@@ -85,8 +116,7 @@ def run_all_attacks():
                     loss.backward()
                     optimizer.step()
 
-
-                # Compute ASR and clean accuracy before defenses
+                # Eval with no defense
                 asr, clean_acc = compute_metrics(model, data_poisoned, poisoned_nodes)
                 results_summary.append({
                     "Dataset": dataset_name,
@@ -137,28 +167,22 @@ def run_all_attacks():
                 })
                 print(f"{dataset_name} | Model: {model_type} | Attack: {attack_name} | Defense: Prune + LD | ASR: {asr_prune_ld:.2f}%, Clean Acc: {clean_acc_prune_ld:.2f}%")
 
-                # Store embeddings for visualization
+                # Store for PCA
                 attack_embeddings_dict[f"{dataset_name}-{model_type}-{attack_name}"] = {
                     'data': data_poisoned_dsod.x,
                     'poisoned_nodes': poisoned_nodes
                 }
 
-                # Clear memory
                 gc.collect()
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
 
-    # Summarize results
+    # Save and summarize
     results_df = pd.DataFrame(results_summary)
     print("\nSummary of Attack Success Rate and Clean Accuracy Before and After Defenses:")
     print(results_df)
-
-    # Save results to CSV
     results_df.to_csv("backdoor_attack_results_summary.csv", index=False)
-
-    # Visualize PCA projections for different attacks
     visualize_pca_for_attacks(attack_embeddings_dict)
-
 
 if __name__ == "__main__":
     run_all_attacks()
