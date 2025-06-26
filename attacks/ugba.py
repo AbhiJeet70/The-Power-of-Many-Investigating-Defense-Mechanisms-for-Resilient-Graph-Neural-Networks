@@ -58,7 +58,7 @@ def select_diverse_nodes(data, num_nodes_to_select, num_clusters=None):
     central_nodes_tensor.to(device)
     ])
 
-    unique_nodes = torch.unique(combined_nodes)[:int(num_nodes_to_select)]
+    unique_nodes = torch.unique(combined_nodes)[:num_nodes_to_select.item()]
 
 
     return unique_nodes.to(device)
