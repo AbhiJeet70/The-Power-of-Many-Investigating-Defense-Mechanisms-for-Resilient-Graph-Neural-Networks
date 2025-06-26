@@ -3,7 +3,7 @@ import torch
 import gc
 import pandas as pd
 from torch.optim import Adam
-from config import device, POISONED_NODE_BUDGET
+from config import DEVICE as device, POISONED_NODE_BUDGET
 from data.load_data import load_dataset, split_dataset
 from gnn_models.gcn import GCN
 from gnn_models.graph_sage import GraphSAGE
