@@ -1,5 +1,7 @@
 import torch
 from attacks.trigger_generator import TriggerGenerator
+from gnn_models.encoders import GCNEncoder
+
 def select_diverse_nodes(data, num_nodes_to_select, num_clusters=None):
     """
     Select nodes using a clustering-based approach to ensure diversity, along with high-degree nodes.
