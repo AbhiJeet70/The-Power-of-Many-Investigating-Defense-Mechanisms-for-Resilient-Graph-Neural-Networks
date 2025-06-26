@@ -52,7 +52,12 @@ def select_diverse_nodes(data, num_nodes_to_select, num_clusters=None):
     central_nodes = sorted(betweenness_centrality, key=betweenness_centrality.get, reverse=True)
     central_nodes_tensor = torch.tensor(central_nodes[:len(selected_nodes) // 2], dtype=torch.long)
 
-    combined_nodes = torch.cat([torch.tensor(selected_nodes), high_degree_nodes, central_nodes_tensor])
+    combined_nodes = torch.cat([
+    torch.tensor(selected_nodes, device=device),
+    high_degree_nodes.to(device),
+    central_nodes_tensor.to(device)
+    ])
+
     unique_nodes = torch.unique(combined_nodes)[:num_nodes_to_select]
 
     return unique_nodes.to(device)
