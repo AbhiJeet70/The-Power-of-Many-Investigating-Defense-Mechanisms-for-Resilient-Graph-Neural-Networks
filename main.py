@@ -74,6 +74,7 @@ def run_all_attacks():
                     data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen)
 
                 # Train model with poisoned data
+                data_poisoned.x = data_poisoned.x.detach().clone()
                 model.train()
                 for epoch in range(50):
                     optimizer.zero_grad()
@@ -83,6 +84,7 @@ def run_all_attacks():
                     )
                     loss.backward()
                     optimizer.step()
+
 
                 # Compute ASR and clean accuracy before defenses
                 asr, clean_acc = compute_metrics(model, data_poisoned, poisoned_nodes)
