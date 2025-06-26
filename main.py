@@ -100,10 +100,14 @@ def run_all_attacks():
             }
 
             for attack_name, attack_fn in attack_methods.items():
-                if attack_name == 'DPGBA':
-                    data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen, alpha=0.7)
+                if attack_name == 'UGBA':
+                    data_poisoned = attack_fn(data, poisoned_node_budget, trigger_gen)  # UGBA expects count
                 else:
-                    data_poisoned = attack_fn(data, poisoned_node_budget, trigger_gen)
+                    poisoned_nodes = torch.arange(poisoned_node_budget).to(device)
+                    if attack_name == 'DPGBA':
+                        data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen, alpha=0.7)
+                    else:
+                        data_poisoned = attack_fn(data, poisoned_nodes, trigger_gen)
 
 
                 data_poisoned.x = data_poisoned.x.detach().clone()
