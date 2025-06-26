@@ -97,7 +97,7 @@ def run_all_attacks():
                 print(f"{dataset_name} | Model: {model_type} | Attack: {attack_name} | Defense: None | ASR: {asr:.2f}%, Clean Acc: {clean_acc:.2f}%")
 
                 # Defense 1: Dominant Set Outlier Detection (DSOD)
-                pruned_nodes, data_poisoned_dsod = dominant_set_clustering(data_poisoned.clone(), threshold=0.9, use_pca=True, pca_components=10)
+                data_poisoned_dsod = dominant_set_clustering(data_poisoned.clone(), threshold=0.9, use_pca=True, pca_components=10)
                 asr_dsod, clean_acc_dsod = compute_metrics(model, data_poisoned_dsod, poisoned_nodes)
                 results_summary.append({
                     "Dataset": dataset_name,
