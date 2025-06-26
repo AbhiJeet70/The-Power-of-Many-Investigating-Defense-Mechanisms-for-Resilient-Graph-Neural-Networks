@@ -23,6 +23,7 @@ def select_diverse_nodes(data, num_nodes_to_select, num_clusters=None):
     Select nodes using a clustering-based approach to ensure diversity, along with high-degree and central nodes.
     """
     device = data.x.device  # ensure everything is on same device
+    num_nodes_to_select = int(num_nodes_to_select) 
 
     if num_clusters is None:
         num_clusters = len(torch.unique(data.y))
