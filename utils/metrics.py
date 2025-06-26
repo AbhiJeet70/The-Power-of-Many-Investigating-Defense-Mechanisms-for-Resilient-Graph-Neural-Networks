@@ -1,4 +1,5 @@
 # metrics.py
+import torch
 from sklearn.metrics import accuracy_score
 
 def compute_metrics(model, data, poisoned_nodes):
